@@ -42,7 +42,6 @@ const usePicker = async (videoElm) => {
 
             //
             colorPreviewDiv.style.backgroundColor = `RGB(${[...d.data].splice(0, 3).join()})`;
-            console.log(d.data)
             RGBPreviewP.innerText = `rgb(${[...d.data].splice(0, 3).join()})`;
             HEXPreviewP.innerText = `#${[...d.data].splice(0, 3).map(e => e.toString(16).padStart(2, '0').toUpperCase()).join('')}`
 
@@ -63,7 +62,7 @@ const usePicker = async (videoElm) => {
 
         const img = document.createElement("img");
         img.src = canvas.toDataURL();
-    }, 300);
+    }, 500); // todo
 }
 
 document.addEventListener('DOMContentLoaded', () => {
