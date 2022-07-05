@@ -62,7 +62,7 @@ const usePicker = async (videoElm) => {
 
         const img = document.createElement("img");
         img.src = canvas.toDataURL();
-    }, 500); // todo
+    }, 300); // todo
 }
 
 document.addEventListener('DOMContentLoaded', () => {
