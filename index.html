@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<head>
+    <script type="text/javascript" src="./script.js"></script>
+    <title>PowerPicker</title>
+
+    <style>
+        .contents {
+            display: flex;
+        }
+
+        .contents__left {
+            width: 256px;
+            height: 720px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #color_preview {
+            flex-grow: 1;
+            background-color: #FAFAFA;
+            margin: 10px;
+
+            display: grid;
+            place-items: center;
+        }
+
+        .start {
+            width: 100%
+        }
+
+        .cursor_preview {
+            background-color: #FAFAFA;
+            width: 256px;
+            height: 256px;
+        }
+
+        .color_preview__texts {
+            font-family: monospace;
+            background-color: #0008;
+            color: #FFFFFF;
+            height: 100px;
+            width: 200px;
+            font-size: 1.2rem;
+            text-align: center;
+            border-radius: 3px;
+        }
+
+        .contents__right {
+            /*background-color: #FAFAFA;*/
+            /*width: 1080px;*/
+            /*height: 720px;*/
+        }
+
+        #main_preview {
+            /*object-fit: contain;*/
+            /*width: 100%;*/
+            /*height: 100%;*/
+        }
+    </style>
+</head>
+<body>
+<div class="contents">
+    <div class="contents__left">
+        <button class="start" id="get">START!</button>
+        <div id="color_preview">
+            <div class="color_preview__texts">
+                <p id="rgb"></p>
+                <p id="hex"></p>
+            </div>
+        </div>
+        <canvas class="cursor_preview" width="256px" id="cursor_preview"></canvas>
+    </div>
+    <div class="contents__right">
+        <canvas id="main_preview"></canvas>
+    </div>
+</div>
+<video style="width: 512px; height: 512px; display: none" autoplay muted id="preview"></video>
+</body>
