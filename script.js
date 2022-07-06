@@ -29,7 +29,11 @@ const getScreenMediaStreamPromise = () => {
 }
 
 const usePicker = async (videoElm) => {
-    videoElm.srcObject = await getScreenMediaStreamPromise();
+    const media = await getScreenMediaStreamPromise();
+    if (!media) {
+        return false;
+    }
+    videoElm.srcObject = media;
     const descriptionDiv = document.getElementById('description')
     descriptionDiv.style.display = 'none';
 
@@ -93,7 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('main_preview').addEventListener('mousedown', (e) => {
         mouseMoving = true;
-        console.log(e)
         updateCursorPosition(e);
     });
     document.getElementById('main_preview').addEventListener('mouseup', () => mouseMoving = false);
