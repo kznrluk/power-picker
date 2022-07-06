@@ -1,8 +1,14 @@
-const CURSOR_PREVIEW_PIXEL_SIZE = [16, 16]; // display -> 16 + 1 (center dot)
+const CURSOR_PREVIEW_PIXEL_SIZE = [8, 8]; // display -> 16 + 1 (center dot)
 const CURSOR_PREVIEW_ZOOM_SCALE = 16
 
 let mouseMoving = false;
 let currentCursorPosition = [1, 1];
+const updateCursorPosition = (e) => {
+    currentCursorPosition = [e.offsetX, e.offsetY];
+    const preview = document.getElementById('cursor_preview');
+    preview.style.left = `${e.clientX - 64}px`;
+    preview.style.top = `${e.clientY - 64}px`;
+}
 
 const getScreenMediaStreamPromise = () => {
     return navigator.mediaDevices.getDisplayMedia({
@@ -11,13 +17,23 @@ const getScreenMediaStreamPromise = () => {
         video: {
             cursor: "always"
         }
+    }).catch(() => {
+        const url = new URL(location.href);
+        const isJapanese = url.pathname.endsWith('ja.html');
+        if (isJapanese) {
+            alert('カラーピッカーの利用にはスクリーンレコードの許可が必要です(送信や保存は行っておりません)');
+        } else {
+            alert('Screen record permission is required to use the color picker (we do not transmit or store the color picker)')
+        }
     })
 }
 
 const usePicker = async (videoElm) => {
     videoElm.srcObject = await getScreenMediaStreamPromise();
+    const descriptionDiv = document.getElementById('description')
+    descriptionDiv.style.display = 'none';
 
-    setTimeout(() => {
+    videoElm.addEventListener('canplay', () => {
         const canvas = document.getElementById('main_preview');
         canvas.width =  videoElm.videoWidth;
         canvas.height = videoElm.videoHeight;
@@ -42,8 +58,13 @@ const usePicker = async (videoElm) => {
 
             //
             colorPreviewDiv.style.backgroundColor = `RGB(${[...d.data].splice(0, 3).join()})`;
-            RGBPreviewP.innerText = `rgb(${[...d.data].splice(0, 3).join()})`;
-            HEXPreviewP.innerText = `#${[...d.data].splice(0, 3).map(e => e.toString(16).padStart(2, '0').toUpperCase()).join('')}`
+            const newRGBText = `rgb(${[...d.data].splice(0, 3).join()})`;
+            const newHEXText = `#${[...d.data].splice(0, 3).map(e => e.toString(16).padStart(2, '0').toUpperCase()).join('')}`;
+            if (RGBPreviewP.innerText !== newRGBText) {
+                RGBPreviewP.innerText = newRGBText;
+                HEXPreviewP.innerText = newHEXText;
+            }
+
 
             ctxCP.drawImage(
                 canvas,
@@ -62,7 +83,7 @@ const usePicker = async (videoElm) => {
 
         const img = document.createElement("img");
         img.src = canvas.toDataURL();
-    }, 300); // todo
+    });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -70,11 +91,15 @@ document.addEventListener('DOMContentLoaded', () => {
         usePicker(document.getElementById("preview"))
     });
 
-    document.getElementById('main_preview').addEventListener('mousedown', () => mouseMoving = true);
+    document.getElementById('main_preview').addEventListener('mousedown', (e) => {
+        mouseMoving = true;
+        console.log(e)
+        updateCursorPosition(e);
+    });
     document.getElementById('main_preview').addEventListener('mouseup', () => mouseMoving = false);
     document.getElementById('main_preview').addEventListener('mousemove', (e) => {
         if (mouseMoving) {
-            currentCursorPosition = [e.offsetX, e.offsetY];
+            updateCursorPosition(e);
         }
     });
 })
